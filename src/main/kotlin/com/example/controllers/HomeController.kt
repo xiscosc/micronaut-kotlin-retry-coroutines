@@ -14,26 +14,32 @@ import javax.inject.Singleton
 class HomeController(val homeService: HomeService) {
 
     @Get("/1")
+    // Cast error
+    // io.micronaut.aop.util.CompletableFutureContinuation -> kotlin.coroutines.jvm.internal.CoroutineStackFrame
     suspend fun getTest1(): HttpResponse<String> {
         return HttpResponse.ok(homeService.test1())
     }
 
     @Get("/2")
+    // Unexpected error occurred: Not a Kotlin coroutine
     suspend fun getTest2(): HttpResponse<String> {
         return HttpResponse.ok(homeService.test2())
     }
 
     @Get("/3")
+    // Unexpected error occurred: Not a Kotlin coroutine
     suspend fun getTest3(): HttpResponse<String> {
         return HttpResponse.ok(homeService.test3())
     }
 
     @Get("/4")
+    // It works
     suspend fun getTest4(): HttpResponse<String> {
         return HttpResponse.ok(homeService.test4())
     }
 
     @Get("/5")
+    // Unexpected error occurred: Not a Kotlin coroutine
     suspend fun getTest5(): HttpResponse<Deferred<String>> {
         val result = coroutineScope {
             async {
@@ -45,7 +51,7 @@ class HomeController(val homeService: HomeService) {
 }
 
 @Singleton
-@Retryable(attempts = 1.toString())
+@Retryable(attempts = "1")
 class HomeService {
     suspend fun test1(): String {
         return coroutineScope {
